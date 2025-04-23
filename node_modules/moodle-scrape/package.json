@@ -1,0 +1,23 @@
+{
+  "name": "moodle-scrape",
+  "version": "1.0.1",
+  "description": "Scrape data from Moodle sites",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nizeic/moodle-scrape.git"
+  },
+  "author": "nizeic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nizeic/moodle-scrape/issues"
+  },
+  "homepage": "https://github.com/nizeic/moodle-scrape#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "node-fetch": "^3.2.2"
+  }
+}

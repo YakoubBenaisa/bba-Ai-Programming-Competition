@@ -1,0 +1,821 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Moodle Resources API",
+    "description": "API for retrieving resources from the Moodle e-learning platform",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/auth-resources/": {
+      "post": {
+        "summary": "Retrieve authenticated resources",
+        "description": "Retrieves resources from a course or category with authentication and optionally downloads files",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "username", "password"],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL of the course or category page",
+                    "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Moodle username",
+                    "example": "your_username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Moodle password",
+                    "example": "your_password"
+                  },
+                  "download_file": {
+                    "type": "boolean",
+                    "description": "Whether to download the first file found",
+                    "default": false,
+                    "example": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "example": "success"
+                        },
+                        "course_url": {
+                          "type": "string",
+                          "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                        },
+                        "authenticated": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "count": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "resource_name": {
+                                "type": "string",
+                                "example": "Techniques d'Analyse Physico-chimique II Fichier"
+                              },
+                              "resource_url": {
+                                "type": "string",
+                                "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+                              },
+                              "pdf_url": {
+                                "type": "string",
+                                "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+                              },
+                              "pdf_name": {
+                                "type": "string",
+                                "example": "Techniques d'Analyse Physico-chimique II.docx"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "example": "success"
+                        },
+                        "course_url": {
+                          "type": "string",
+                          "example": "https://elearning.univ-bba.dz/course/index.php?categoryid=795"
+                        },
+                        "authenticated": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "count": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "8527"
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Techniques d'Analyse Physico-chimique II"
+                              },
+                              "url": {
+                                "type": "string",
+                                "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "Downloaded file when download_file is true"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "URL is required in the request body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication failed. Please check your credentials."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Error processing course: An unexpected error occurred"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/": {
+      "get": {
+        "summary": "Retrieve all courses",
+        "description": "Retrieves all courses from the e-learning platform",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 150
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "8527"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Techniques d'Analyse Physico-chimique II"
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/departments/": {
+      "get": {
+        "summary": "Retrieve all departments",
+        "description": "Retrieves all departments from the e-learning platform",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 15
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "795"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Chemistry Department"
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://elearning.univ-bba.dz/course/index.php?categoryid=795"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/{course_id}/": {
+      "get": {
+        "summary": "Retrieve resources from a course",
+        "description": "Retrieves resources from a specific course without authentication",
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the course",
+            "example": "8527"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "course_id": {
+                      "type": "string",
+                      "example": "8527"
+                    },
+                    "course_url": {
+                      "type": "string",
+                      "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "resource_name": {
+                            "type": "string",
+                            "example": "Techniques d'Analyse Physico-chimique II Fichier"
+                          },
+                          "resource_url": {
+                            "type": "string",
+                            "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+                          },
+                          "pdf_url": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "pdf_name": {
+                            "type": "string",
+                            "example": ""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/": {
+      "post": {
+        "summary": "Retrieve resources from a course URL",
+        "description": "Retrieves resources from a specific course URL without authentication",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL of the course page",
+                    "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "course_url": {
+                      "type": "string",
+                      "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "resource_name": {
+                            "type": "string",
+                            "example": "Techniques d'Analyse Physico-chimique II Fichier"
+                          },
+                          "resource_url": {
+                            "type": "string",
+                            "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+                          },
+                          "pdf_url": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "pdf_name": {
+                            "type": "string",
+                            "example": ""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Course URL is required in the request body"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login/": {
+      "post": {
+        "summary": "Test Moodle login",
+        "description": "Tests authentication with Moodle credentials",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Moodle username",
+                    "example": "your_username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Moodle password",
+                    "example": "your_password"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Moodle URL",
+                    "default": "https://elearning.univ-bba.dz",
+                    "example": "https://elearning.univ-bba.dz"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "session": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "example": {
+                        "MoodleSession": "abc123def456"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login failed. Please check your credentials."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course-pdfs/": {
+      "post": {
+        "summary": "Retrieve PDFs from a course",
+        "description": "Retrieves PDF files from a specific course with authentication",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["course_id", "username", "password"],
+                "properties": {
+                  "course_id": {
+                    "type": "string",
+                    "description": "ID of the course",
+                    "example": "8527"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "Moodle username",
+                    "example": "your_username"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Moodle password",
+                    "example": "your_password"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Moodle URL",
+                    "default": "https://elearning.univ-bba.dz",
+                    "example": "https://elearning.univ-bba.dz"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Found 2 PDF files in course"
+                    },
+                    "course_name": {
+                      "type": "string",
+                      "example": "Techniques d'Analyse Physico-chimique II"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "pdfs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "resource_name": {
+                            "type": "string",
+                            "example": "Techniques d'Analyse Physico-chimique II Fichier"
+                          },
+                          "resource_url": {
+                            "type": "string",
+                            "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://elearning.univ-bba.dz/pluginfile.php/123456/mod_resource/content/1/document.pdf"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Techniques d'Analyse Physico-chimique II.pdf"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Course ID is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login failed: Authentication failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Failed to get PDFs from course: An unexpected error occurred"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "error"
+          },
+          "message": {
+            "type": "string",
+            "example": "Error message describing what went wrong"
+          }
+        }
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "resource_name": {
+            "type": "string",
+            "example": "Techniques d'Analyse Physico-chimique II Fichier"
+          },
+          "resource_url": {
+            "type": "string",
+            "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+          },
+          "pdf_url": {
+            "type": "string",
+            "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+          },
+          "pdf_name": {
+            "type": "string",
+            "example": "Techniques d'Analyse Physico-chimique II.docx"
+          }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "8527"
+          },
+          "name": {
+            "type": "string",
+            "example": "Techniques d'Analyse Physico-chimique II"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://elearning.univ-bba.dz/course/view.php?id=8527"
+          }
+        }
+      },
+      "Department": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "795"
+          },
+          "name": {
+            "type": "string",
+            "example": "Chemistry Department"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://elearning.univ-bba.dz/course/index.php?categoryid=795"
+          }
+        }
+      },
+      "PDF": {
+        "type": "object",
+        "properties": {
+          "resource_name": {
+            "type": "string",
+            "example": "Techniques d'Analyse Physico-chimique II Fichier"
+          },
+          "resource_url": {
+            "type": "string",
+            "example": "https://elearning.univ-bba.dz/mod/resource/view.php?id=131855"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://elearning.univ-bba.dz/pluginfile.php/123456/mod_resource/content/1/document.pdf"
+          },
+          "name": {
+            "type": "string",
+            "example": "Techniques d'Analyse Physico-chimique II.pdf"
+          }
+        }
+      }
+    }
+  }
+}

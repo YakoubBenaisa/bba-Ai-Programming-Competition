@@ -1,0 +1,14 @@
+{
+  "name": "moodle-scraper",
+  "version": "1.0.0",
+  "description": "Moodle scraper for elearning.univ-bba.dz",
+  "main": "moodle_scraper.js",
+  "scripts": {
+    "test": "node test_moodle_scraper.js"
+  },
+  "dependencies": {
+    "moodle-scrape": "^1.0.1",
+    "node-fetch": "^2.6.7",
+    "undici": "^5.29.0"
+  }
+}

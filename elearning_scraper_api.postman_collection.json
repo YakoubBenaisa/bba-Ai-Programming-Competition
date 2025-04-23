@@ -1,0 +1,144 @@
+{
+  "info": {
+    "name": "Elearning Scraper API",
+    "description": "API collection for scraping elearning.univ-bba.dz website",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Courses",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/courses/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "courses", ""]
+        },
+        "description": "Get all courses from the elearning.univ-bba.dz website"
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Departments",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/departments/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "departments", ""]
+        },
+        "description": "Get all departments from the elearning.univ-bba.dz website"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Courses by Category",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/category/162/courses/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "category", "162", "courses", ""]
+        },
+        "description": "Get courses from a specific category (e.g., category 162)"
+      },
+      "response": []
+    },
+    {
+      "name": "Extract Links from URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"url\": \"https://elearning.univ-bba.dz/course/index.php?categoryid=162\"\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/links/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "links", ""]
+        },
+        "description": "Extract links with the 'aalink' class from a provided URL"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Course Resources by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/course/1280/resources/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "course", "1280", "resources", ""]
+        },
+        "description": "Get resources and PDF links from a specific course page by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Extract Resources from Course URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"url\": \"https://elearning.univ-bba.dz/course/view.php?id=1280\"\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/resources/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "resources", ""]
+        },
+        "description": "Extract resources and PDF links from a provided course URL"
+      },
+      "response": []
+    },
+    {
+      "name": "Extract Resources with Authentication",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"url\": \"https://elearning.univ-bba.dz/course/view.php?id=5873\",\n    \"username\": \"your_username\",\n    \"password\": \"your_password\"\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/auth-resources/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "auth-resources", ""]
+        },
+        "description": "Extract resources and PDF links from a provided course URL with authentication"
+      },
+      "response": []
+    }
+  ]
+}

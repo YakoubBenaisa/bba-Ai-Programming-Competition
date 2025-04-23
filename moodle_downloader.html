@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodle File Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        #loading {
+            text-align: center;
+            display: none;
+        }
+        .file-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .download-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .download-btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <h1>Moodle File Downloader</h1>
+    
+    <div class="form-group">
+        <label for="url-type">URL Type:</label>
+        <select id="url-type">
+            <option value="course">Course URL</option>
+            <option value="course-id">Course ID</option>
+            <option value="category">Category URL</option>
+        </select>
+    </div>
+    
+    <div class="form-group" id="url-input-group">
+        <label for="url">Course/Category URL:</label>
+        <input type="text" id="url" placeholder="https://elearning.univ-bba.dz/course/view.php?id=8527">
+    </div>
+    
+    <div class="form-group" id="course-id-input-group" style="display: none;">
+        <label for="course-id">Course ID:</label>
+        <input type="text" id="course-id" placeholder="8527">
+    </div>
+    
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Your Moodle username">
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Your Moodle password">
+    </div>
+    
+    <div class="form-group">
+        <label for="api-base">API Base URL:</label>
+        <input type="text" id="api-base" value="http://127.0.0.1:8008/api">
+    </div>
+    
+    <button id="fetch-btn">Fetch Files</button>
+    
+    <div id="loading">
+        <p>Loading... Please wait.</p>
+    </div>
+    
+    <div id="result">
+        <h2>Files Found:</h2>
+        <ul id="file-list" class="file-list"></ul>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlTypeSelect = document.getElementById('url-type');
+            const urlInputGroup = document.getElementById('url-input-group');
+            const courseIdInputGroup = document.getElementById('course-id-input-group');
+            const fetchBtn = document.getElementById('fetch-btn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const fileList = document.getElementById('file-list');
+            
+            // Toggle input fields based on URL type
+            urlTypeSelect.addEventListener('change', function() {
+                if (this.value === 'course-id') {
+                    urlInputGroup.style.display = 'none';
+                    courseIdInputGroup.style.display = 'block';
+                } else {
+                    urlInputGroup.style.display = 'block';
+                    courseIdInputGroup.style.display = 'none';
+                }
+            });
+            
+            // Fetch files button click handler
+            fetchBtn.addEventListener('click', function() {
+                const urlType = urlTypeSelect.value;
+                const url = document.getElementById('url').value;
+                const courseId = document.getElementById('course-id').value;
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const apiBase = document.getElementById('api-base').value;
+                
+                // Validate inputs
+                if (urlType === 'course-id' && !courseId) {
+                    alert('Please enter a course ID');
+                    return;
+                }
+                
+                if (urlType !== 'course-id' && !url) {
+                    alert('Please enter a URL');
+                    return;
+                }
+                
+                if (!username || !password) {
+                    alert('Please enter your username and password');
+                    return;
+                }
+                
+                // Show loading indicator
+                loading.style.display = 'block';
+                result.style.display = 'none';
+                fileList.innerHTML = '';
+                
+                // Determine which endpoint to use
+                let endpoint;
+                let payload;
+                
+                if (urlType === 'course-id') {
+                    endpoint = `${apiBase}/moodle-pdfs/`;
+                    payload = {
+                        course_id: courseId,
+                        username: username,
+                        password: password
+                    };
+                } else {
+                    endpoint = `${apiBase}/mock-auth-resources/`;
+                    payload = {
+                        url: url,
+                        username: username,
+                        password: password,
+                        download_file: false
+                    };
+                }
+                
+                // Fetch files
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading indicator
+                    loading.style.display = 'none';
+                    
+                    // Display results
+                    result.style.display = 'block';
+                    
+                    if (data.status === 'success') {
+                        // Determine which property contains the files
+                        const files = data.pdfs || data.data;
+                        
+                        if (files && files.length > 0) {
+                            files.forEach(file => {
+                                const li = document.createElement('li');
+                                li.className = 'file-item';
+                                
+                                // Determine file properties based on the endpoint
+                                const fileName = file.name || file.pdf_name || 'Unknown';
+                                const fileUrl = file.url || file.pdf_url || '';
+                                const resourceName = file.resource_name || '';
+                                
+                                // Create file item HTML
+                                li.innerHTML = `
+                                    <div>
+                                        <strong>${fileName}</strong>
+                                        ${resourceName ? `<p>From: ${resourceName}</p>` : ''}
+                                        ${fileUrl ? `<button class="download-btn" data-url="${fileUrl}">Download</button>` : ''}
+                                    </div>
+                                `;
+                                
+                                fileList.appendChild(li);
+                            });
+                            
+                            // Add event listeners to download buttons
+                            document.querySelectorAll('.download-btn').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    const fileUrl = this.getAttribute('data-url');
+                                    
+                                    // For demonstration purposes, we'll open the URL in a new tab
+                                    // In a real application, you might want to use a server-side proxy
+                                    // to download the file with authentication
+                                    window.open(fileUrl, '_blank');
+                                });
+                            });
+                        } else {
+                            fileList.innerHTML = '<li class="file-item">No files found</li>';
+                        }
+                    } else {
+                        fileList.innerHTML = `<li class="file-item">Error: ${data.message || 'Unknown error'}</li>`;
+                    }
+                })
+                .catch(error => {
+                    // Hide loading indicator
+                    loading.style.display = 'none';
+                    
+                    // Display error
+                    result.style.display = 'block';
+                    fileList.innerHTML = `<li class="file-item">Error: ${error.message}</li>`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

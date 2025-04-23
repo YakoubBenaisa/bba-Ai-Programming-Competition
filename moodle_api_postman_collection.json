@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "a8b5e3c7-f1d2-4e8c-9a5f-6d7e8f9g0h1i",
+		"name": "Moodle API Collection",
+		"description": "A collection of API endpoints for interacting with Moodle/elearning.univ-bba.dz",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Moodle Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"yakoub.benaissa\",\n    \"password\": \"aLnmftOM\",\n    \"url\": \"https://elearning.univ-bba.dz\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/moodle-login/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"moodle-login",
+								""
+							]
+						},
+						"description": "Login to Moodle and get a session that can be used for subsequent requests."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for authentication with Moodle"
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								""
+							]
+						},
+						"description": "Get a list of all courses from elearning.univ-bba.dz"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Moodle Courses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"yakoub.benaissa\",\n    \"password\": \"aLnmftOM\",\n    \"url\": \"https://elearning.univ-bba.dz\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/moodle-courses/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"moodle-courses",
+								""
+							]
+						},
+						"description": "Get a list of courses from Moodle using authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/category/1/courses/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"category",
+								"1",
+								"courses",
+								""
+							]
+						},
+						"description": "Get courses from a specific category."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for retrieving course information"
+		},
+		{
+			"name": "Departments",
+			"item": [
+				{
+					"name": "Get All Departments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departments/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								""
+							]
+						},
+						"description": "Get a list of all departments from elearning.univ-bba.dz"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for retrieving department information"
+		},
+		{
+			"name": "Resources",
+			"item": [
+				{
+					"name": "Get Course Resources (GET)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/course/1280/resources/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"course",
+								"1280",
+								"resources",
+								""
+							]
+						},
+						"description": "Get resources from a specific course using the course ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Resources (POST)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://elearning.univ-bba.dz/course/view.php?id=1280\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/resources/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"resources",
+								""
+							]
+						},
+						"description": "Get resources from a specific course using the course URL."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Authenticated Resources",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://elearning.univ-bba.dz/course/view.php?id=1280\",\n    \"username\": \"yakoub.benaissa\",\n    \"password\": \"aLnmftOM\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth-resources/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth-resources",
+								""
+							]
+						},
+						"description": "Get resources from a specific course using authentication."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for retrieving course resources"
+		},
+		{
+			"name": "PDFs",
+			"item": [
+				{
+					"name": "Get Course PDFs (POST)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"course_id\": \"8527\",\n    \"username\": \"yakoub.benaissa\",\n    \"password\": \"aLnmftOM\",\n    \"url\": \"https://elearning.univ-bba.dz\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/moodle-pdfs/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"moodle-pdfs",
+								""
+							]
+						},
+						"description": "Get PDF files from a specific course using authentication (POST method). This endpoint now detects resources that directly download files."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course PDFs (GET)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/moodle-pdfs/8527/?username=yakoub.benaissa&password=aLnmftOM&url=https://elearning.univ-bba.dz",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"moodle-pdfs",
+								"8527",
+								""
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "yakoub.benaissa"
+								},
+								{
+									"key": "password",
+									"value": "aLnmftOM"
+								},
+								{
+									"key": "url",
+									"value": "https://elearning.univ-bba.dz"
+								}
+							]
+						},
+						"description": "Get PDF files from a specific course using authentication (GET method). This endpoint now detects resources that directly download files."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course PDFs with Session (POST)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"course_id\": \"8527\",\n    \"session\": {\n        \"MoodleSession\": \"bt1v8uhg0ufkavibpn6e0ujuj7\",\n        \"MOODLEID1_\": \"sodium%3ANYHUYCKmPodVYLFU%2BkJ7%2F%2FMPFchdkit%2BTurbua6SHnA%3D\"\n    },\n    \"url\": \"https://elearning.univ-bba.dz\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/moodle-pdfs/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"moodle-pdfs",
+								""
+							]
+						},
+						"description": "Get PDF files from a specific course using a session from a previous login. This endpoint now detects resources that directly download files."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for retrieving PDF files from courses"
+		},
+		{
+			"name": "Links",
+			"item": [
+				{
+					"name": "Extract Links",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://elearning.univ-bba.dz/course/index.php?categoryid=1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/links/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"links",
+								""
+							]
+						},
+						"description": "Extract links with 'aalink' class from a provided URL."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for extracting links"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8001",
+			"type": "string"
+		}
+	]
+}
